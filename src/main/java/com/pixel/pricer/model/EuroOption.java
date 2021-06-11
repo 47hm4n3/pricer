@@ -41,16 +41,39 @@ public class EuroOption extends UnderlyingAsset {
 		double timeStep = maturity / nbSteps;
 		
 		double val = 0;
+		double res = 0;
+		double r = 0;
 		
 		for (int i = 0; i < nbSteps; i++) {
-			val = val * Math.exp((interest - 0.5 * volatility) * timeStep + Math.sqrt(volatility * timeStep) * rand.nextGaussian());
+			r = rand.nextGaussian();
+			//System.out.println("rand = " + r);
+			val = spot * Math.exp(((interest - Math.pow(volatility, 2) / 2) * timeStep) + (volatility * Math.sqrt(timeStep) * r));
+			//System.out.println("val = " + val);
+			res = Math.max((val - strike), 0);
+			//System.out.println("C res = " + res + " -> " + (val - strike));
 		}
 		
-		return val;
+		return res;
 	}
 	
-	public double putPriceMC(int nbSteps, int nbRuns) {
-		return callPriceMC(nbSteps);
+	public double putPriceMC(int nbSteps) {
+		Random rand = new Random();
+		double timeStep = maturity / nbSteps;
+		
+		double val = 0;
+		double res = 0;
+		double r = 0;
+		
+		for (int i = 0; i < nbSteps; i++) {
+			r = rand.nextGaussian();
+			//System.out.println("rand = " + r);
+			val = spot * Math.exp(((interest - Math.pow(volatility, 2) / 2) * timeStep) + (volatility * Math.sqrt(timeStep) * r));
+			//System.out.println("val = " + val);
+			res = Math.max((strike - val), 0);
+			//System.out.println("P res = " + res + " -> " + (strike - val));
+		}
+		
+		return res;
 	}
 	
 	// BS
